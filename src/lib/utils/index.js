@@ -20,7 +20,19 @@ export { default as PureComponent } from "./PureComponent";
 export * from "./barWidth";
 export * from "./strokeDasharray";
 
-export function getLogger(prefix) {
+import { default as rebind } from "./rebind";
+import { default as zipper } from "./zipper";
+import { default as merge } from "./merge";
+import { default as slidingWindow } from "./slidingWindow";
+import { default as shallowEqual } from "./shallowEqual";
+import { default as mappedSlidingWindow } from "./mappedSlidingWindow";
+import { default as accumulatingWindow } from "./accumulatingWindow";
+import { default as PureComponent } from "./PureComponent";
+
+import { plotDataLengthBarWidth, timeIntervalBarWidth } from "./barWidth";
+import { strokeDashTypes, getStrokeDasharrayCanvas, getStrokeDasharray } from "./strokeDasharray";
+
+export const getLogger = function(prefix) {
 	let logger = noop;
 	if (process.env.NODE_ENV !== "production") {
 		logger = require("debug")("react-stockcharts:" + prefix);
@@ -28,13 +40,13 @@ export function getLogger(prefix) {
 	return logger;
 }
 
-export function sign(x) {
+export const sign = function(x) {
 	return (x > 0) - (x < 0);
 }
 
 export const yes = () => true;
 
-export function path(loc = []) {
+export const path = function(loc = []) {
 	const key = Array.isArray(loc) ? loc : [loc];
 	const length = key.length;
 
@@ -49,11 +61,11 @@ export function path(loc = []) {
 	};
 }
 
-export function functor(v) {
+export const functor = function(v) {
 	return typeof v === "function" ? v : () => v;
 }
 
-export function createVerticalLinearGradient(stops) {
+export const createVerticalLinearGradient = function(stops) {
 	return function(moreProps, ctx) {
 		const { chartConfig: { height } } = moreProps;
 
@@ -66,7 +78,7 @@ export function createVerticalLinearGradient(stops) {
 	};
 }
 
-export function getClosestItemIndexes2(array, value, accessor) {
+export const getClosestItemIndexes2 = function(array, value, accessor) {
 	let left = bisector(accessor).left(array, value);
 	left = Math.max(left - 1, 0);
 	let right = Math.min(left + 1, array.length - 1);
@@ -77,15 +89,15 @@ export function getClosestItemIndexes2(array, value, accessor) {
 	return { left, right };
 }
 
-export function degrees(radians) {
+export const degrees = function(radians) {
 	return radians * 180 / Math.PI;
 }
 
-export function radians(degrees) {
+export const radians = function(degrees) {
 	return degrees * Math.PI / 180;
 }
 
-export function getClosestValue(inputValue, currentValue) {
+export const getClosestValue = function(inputValue, currentValue) {
 	const values = isArray(inputValue) ? inputValue : [inputValue];
 
 	const diff = values
@@ -94,7 +106,7 @@ export function getClosestValue(inputValue, currentValue) {
 	return currentValue + diff;
 }
 
-export function find(list, predicate, context = this) {
+export const find = function(list, predicate, context = this) {
 	for (let i = 0; i < list.length; ++i) {
 		if (predicate.call(context, list[i], i, list)) {
 			return list[i];
@@ -103,7 +115,7 @@ export function find(list, predicate, context = this) {
 	return undefined;
 }
 
-export function d3Window(node) {
+export const d3Window = function(node) {
 	const d3win = node
 		&& (node.ownerDocument && node.ownerDocument.defaultView
 			|| node.document && node
@@ -119,7 +131,7 @@ export const TOUCHMOVE = "touchmove.pan";
 export const TOUCHEND = "touchend.pan touchcancel.pan";
 
 
-export function getTouchProps(touch) {
+export const getTouchProps = function(touch) {
 	if (!touch) return {};
 	return {
 		pageX: touch.pageX,
@@ -129,7 +141,7 @@ export function getTouchProps(touch) {
 	};
 }
 
-export function getClosestItemIndexes(array, value, accessor, log) {
+export const getClosestItemIndexes = function(array, value, accessor, log) {
 	let lo = 0, hi = array.length - 1;
 	while (hi - lo > 1) {
 		const mid = Math.round((lo + hi) / 2);
@@ -159,7 +171,7 @@ export function getClosestItemIndexes(array, value, accessor, log) {
 	return { left: lo, right: hi };
 }
 
-export function getClosestItem(array, value, accessor, log) {
+export const getClosestItem = function(array, value, accessor, log) {
 	const { left, right } = getClosestItemIndexes(array, value, accessor, log);
 
 	if (left === right) {
@@ -177,7 +189,7 @@ export function getClosestItem(array, value, accessor, log) {
 
 export const overlayColors = scaleOrdinal(schemeCategory10);
 
-export function head(array, accessor) {
+export const head = function(array, accessor) {
 	if (accessor && array) {
 		let value;
 		for (let i = 0; i < array.length; i++) {
@@ -189,7 +201,7 @@ export function head(array, accessor) {
 	return array ? array[0] : undefined;
 }
 
-export function tail(array, accessor) {
+export const tail = function(array, accessor) {
 	if (accessor && array) {
 		return array.map(accessor).slice(1);
 	}
@@ -198,7 +210,7 @@ export function tail(array, accessor) {
 
 export const first = head;
 
-export function last(array, accessor) {
+export const last = function(array, accessor) {
 	if (accessor && array) {
 		let value;
 		for (let i = array.length - 1; i >= 0; i--) {
@@ -211,21 +223,21 @@ export function last(array, accessor) {
 	return length ? array[length - 1] : undefined;
 }
 
-export function isDefined(d) {
+export const isDefined = function(d) {
 	return d !== null && typeof d != "undefined";
 }
 
-export function isNotDefined(d) {
+export const isNotDefined = function(d) {
 	return !isDefined(d);
 }
 
-export function isObject(d) {
+export const isObject = function(d) {
 	return isDefined(d) && typeof d === "object" && !Array.isArray(d);
 }
 
 export const isArray = Array.isArray;
 
-export function touchPosition(touch, e) {
+export const touchPosition = function(touch, e) {
 	const container = e.target,
 		rect = container.getBoundingClientRect(),
 		x = touch.clientX - rect.left - container.clientLeft,
@@ -234,7 +246,7 @@ export function touchPosition(touch, e) {
 	return xy;
 }
 
-export function mousePosition(e, defaultRect) {
+export const mousePosition = function(e, defaultRect) {
 	const container = e.currentTarget;
 	const rect = defaultRect || container.getBoundingClientRect(),
 		x = e.clientX - rect.left - container.clientLeft,
@@ -243,8 +255,7 @@ export function mousePosition(e, defaultRect) {
 	return xy;
 }
 
-
-export function clearCanvas(canvasList, ratio) {
+export const clearCanvas = function(canvasList, ratio) {
 	canvasList.forEach(each => {
 		each.setTransform(1, 0, 0, 1, 0, 0);
 		each.clearRect(-1, -1, each.canvas.width + 2, each.canvas.height + 2);
@@ -252,11 +263,11 @@ export function clearCanvas(canvasList, ratio) {
 	});
 }
 
-export function capitalizeFirst(str) {
+export const capitalizeFirst = function(str) {
 	return str.charAt(0).toUpperCase() + str.substring(1);
 }
 
-export function hexToRGBA(inputHex, opacity) {
+export const hexToRGBA = function(inputHex, opacity) {
 	const hex = inputHex.replace("#", "");
 	if (inputHex.indexOf("#") > -1 && (hex.length === 3 || hex.length === 6)) {
 
@@ -273,7 +284,7 @@ export function hexToRGBA(inputHex, opacity) {
 	return inputHex;
 }
 
-export function toObject(array, iteratee = identity) {
+export const toObject = function(array, iteratee = identity) {
 	return array.reduce((returnObj, a) => {
 		const [key, value] = iteratee(a);
 		return {
@@ -284,7 +295,7 @@ export function toObject(array, iteratee = identity) {
 }
 
 // copied from https://github.com/lodash/lodash/blob/master/mapValue.js
-export function mapValue(object, iteratee) {
+export const mapValue = function(object, iteratee) {
 	object = Object(object);
 	// eslint-disable-next-line prefer-const
 	let result = {};
@@ -300,7 +311,7 @@ export function mapValue(object, iteratee) {
 }
 
 // copied from https://github.com/lodash/lodash/blob/master/mapObject.js
-export function mapObject(object = {}, iteratee = identity) {
+export const mapObject = function(object = {}, iteratee = identity) {
 	const props = Object.keys(object);
 
 	// eslint-disable-next-line prefer-const
@@ -312,7 +323,7 @@ export function mapObject(object = {}, iteratee = identity) {
 	return result;
 }
 
-export function replaceAtIndex(array, index, value) {
+export const replaceAtIndex = function(array, index, value) {
 	if (isDefined(array) && array.length > index) {
 		return array.slice(0, index)
 			.concat(value)
@@ -322,8 +333,66 @@ export function replaceAtIndex(array, index, value) {
 }
 
 // copied from https://github.com/lodash/lodash/blob/master/forOwn.js
-export function forOwn(obj, iteratee) {
+export const forOwn = function(obj, iteratee) {
 	const object = Object(obj);
 	Object.keys(object)
 		.forEach(key => iteratee(object[key], key, object));
+}
+
+export default {
+	noop,
+	identity,
+	rebind,
+	zipper,
+	merge,
+	slidingWindow,
+	shallowEqual,
+	mappedSlidingWindow,
+	accumulatingWindow,
+	PureComponent,
+	plotDataLengthBarWidth,
+	timeIntervalBarWidth,
+	strokeDashTypes,
+	getStrokeDasharrayCanvas,
+	getStrokeDasharray,
+	getLogger,
+	sign,
+	yes,
+	path,
+	functor,
+	createVerticalLinearGradient,
+	getClosestItemIndexes2,
+	degrees,
+	radians,
+	getClosestValue,
+	find,
+	d3Window,
+	MOUSEENTER,
+	MOUSELEAVE,
+	MOUSEMOVE,
+	MOUSEUP,
+	TOUCHMOVE,
+	TOUCHEND,
+	getTouchProps,
+	getClosestItemIndexes,
+	getClosestItem,
+	overlayColors,
+	head,
+	tail,
+	first,
+	last,
+	isDefined,
+	isNotDefined,
+	isObject,
+	isArray,
+	touchPosition,
+	mousePosition,
+	clearCanvas,
+	capitalizeFirst,
+	hexToRGBA,
+	toObject,
+	mapValue,
+	mapObject,
+	replaceAtIndex,
+	forOwn
 }

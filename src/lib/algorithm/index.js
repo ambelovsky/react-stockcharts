@@ -1,5 +1,3 @@
-
-
 import { merge, slidingWindow, identity } from "../utils";
 
 export default function() {
