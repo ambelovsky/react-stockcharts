@@ -35,7 +35,7 @@ import { strokeDashTypes, getStrokeDasharrayCanvas, getStrokeDasharray } from ".
 export const getLogger = function(prefix) {
 	let logger = noop;
 	if (process.env.NODE_ENV !== "production") {
-		logger = require("debug")("react-stockcharts:" + prefix);
+		//logger = require("debug")("react-stockcharts:" + prefix);
 	}
 	return logger;
 }
